@@ -1,7 +1,7 @@
 [![CI](https://github.com/lucasteles/FsFaker/actions/workflows/ci.yml/badge.svg)](https://github.com/lucasteles/FsFaker/actions/workflows/ci.yml)
 [![Nuget](https://img.shields.io/nuget/v/FsFaker.svg?style=flat)](https://www.nuget.org/packages/FsFaker)
 
-# FsFaker 🎭
+# FsFaker
 
 Easily define data builders with [Bogus](https://github.com/bchavez/Bogus)
 
