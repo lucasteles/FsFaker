@@ -61,6 +61,7 @@ let person' =
     }
 
 let person1 = person'.Generate()
+let person1' = generate person'
 
 let person2 =
     person' {
@@ -77,10 +78,19 @@ let persons =
 
 let infinityPersons = person' { lazy_seq }
 
+let personTuple1, personTuple2 =
+    person' {
+        rule (fun p -> p.Status) "cursed"
+        two
+    }
+
 printfn "%A" person1
 printfn "%A" person2
 printfn "%A" persons
+printfn "%A,%A" personTuple1 personTuple2
+printfn "From faker: %A" (generate person'.Faker)
 printfn "%A" (infinityPersons |> Seq.take 3 |> Seq.toList)
+
 
 type CustomPersonBuilder(?faker) =
     inherit BaseBuilder<Person, CustomPersonBuilder>(faker)
@@ -97,7 +107,7 @@ type CustomPersonBuilder(?faker) =
             .RuleFor((fun x -> x.Age), 18)
             .RuleFor((fun x -> x.BirthDate), (fun _ p -> DateTime.Today.AddYears(-p.Age)))
 
-let customResult =
+let customBuilder =
     CustomPersonBuilder() {
         withName "Artorias"
         canDrive
@@ -109,8 +119,7 @@ let customResult =
         rand person.Id
         set person.Status "active"
         set person.MaritalStatusEnum MaritalStatus.Single
-
-        one
     }
 
-printfn "%A" customResult
+printfn "custom: %A" (customBuilder { one })
+printfn "%A" (generate customBuilder)

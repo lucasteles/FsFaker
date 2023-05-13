@@ -24,6 +24,7 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
     member this.Run(v: LazyFaker<'t>) = v.GetFaker() |> Some |> BuilderFor<'t>
     member this.Run(GetFaker faker) = faker.GetFaker()
     member this.Run(GenerateOne faker) = faker.Generate()
+    member this.Run(GenerateTwo faker) = faker.Generate(), faker.Generate()
     member inline this.Run(MapFaker value) = value: ^a
 
     member this.Run(GenerateList(faker, countOrMin, max)) =
@@ -54,6 +55,9 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
 
     [<CustomOperation("one")>]
     member this.One(faker: LazyFaker<'t>) = GenerateOne faker
+
+    [<CustomOperation("two")>]
+    member this.Two(faker: LazyFaker<'t>) = GenerateTwo faker
 
     [<CustomOperation("generate")>]
     member this.Generate(faker: LazyFaker<'t>, countOrMin: int, ?max: int) = GenerateList(faker, countOrMin, max)

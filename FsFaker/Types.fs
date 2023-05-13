@@ -59,6 +59,7 @@ open FsFaker.Types
 type GetFaker<'t> when 't: not struct = GetFaker of LazyFaker<'t>
 type BuildInto<'t> when 't: not struct = BuildInto of LazyFaker<'t>
 type GenerateOne<'t> when 't: not struct = GenerateOne of LazyFaker<'t>
+type GenerateTwo<'t> when 't: not struct = GenerateTwo of LazyFaker<'t>
 type GenerateList<'t> when 't: not struct = GenerateList of LazyFaker<'t> * int * int option
 type GenerateLazy<'t> when 't: not struct = GenerateLazy of LazyFaker<'t> * int option
 

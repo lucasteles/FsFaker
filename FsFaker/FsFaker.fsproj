@@ -6,7 +6,7 @@
         <IsPackable>true</IsPackable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Authors>Lucas Teles - lucas.teles@outlook.com</Authors>
-        <Company/>
+        <Company />
         <Description>Use Bogus to create data builders in F#</Description>
         <RepositoryType>GitHub</RepositoryType>
         <PackageProjectUrl>https://github.com/lucasteles/FsFaker</PackageProjectUrl>
@@ -27,12 +27,13 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="..\README.md" Pack="true" PackagePath="\"/>
-        <Compile Include="Extensions.fs"/>
-        <Compile Include="Types.fs"/>
-        <Compile Include="Helpers.fs"/>
-        <Compile Include="BuilderFor.fs"/>
-        <Compile Include="BaseBuilder.fs"/>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+        <Compile Include="Config.fs" />
+        <Compile Include="Types.fs" />
+        <Compile Include="Helpers.fs" />
+        <Compile Include="BuilderFor.fs" />
+        <Compile Include="BaseBuilder.fs" />
+        <Compile Include="Extensions.fs" />
     </ItemGroup>
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
@@ -42,12 +43,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bogus" Version="34.0.2"/>
+        <PackageReference Include="Bogus" Version="34.0.2" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
-        <PackageReference Update="FSharp.Core" Version="6.0.7"/>
+        <PackageReference Update="FSharp.Core" Version="6.0.7" />
     </ItemGroup>
 
 </Project>
