@@ -5,8 +5,6 @@
 
 Easily define data builders with [Bogus](https://github.com/bchavez/Bogus)
 
-> **⚠️** This library is beta
-
 ## Getting started
 
 [NuGet package](https://www.nuget.org/packages/FsFaker) available:
