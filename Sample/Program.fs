@@ -38,9 +38,9 @@ FsFakerConfig.setLocale "pt_BR"
 let address' =
     BuilderFor<Address>() {
         build into address
-        set address.City (fun f -> f.Address.City())
-        set address.Street (fun f -> f.Address.StreetName())
-        set address.Type (fun f -> f.Random.Union<AddressType>())
+        set address.City _.Address.City()
+        set address.Street _.Address.StreetName()
+        set address.Type Faker.randomUnion<AddressType>
     }
 
 let person' =
@@ -48,10 +48,10 @@ let person' =
         locale "en"
 
         build into person
-        set person.Name (fun f -> f.Person.FirstName)
-        set person.Email (fun f -> f.Person.Email)
-        set person.BirthDate (fun f -> f.Date.Past())
-        set person.Age (fun f p -> DateTime.Today.Subtract(p.BirthDate).TotalDays |> int)
+        set person.Name _.Person.FirstName
+        set person.Email _.Person.Email
+        set person.BirthDate _.Date.Past()
+        set person.Age (fun _ p -> DateTime.Today.Subtract(p.BirthDate).TotalDays |> int)
         set person.Address address'
         set person.OtherAddresses address' 2
 
@@ -61,26 +61,26 @@ let person' =
     }
 
 let person1 = person'.Generate()
-let person1' = generate person'
+let person1' = Faker.generate person'.Faker
 
 let person2 =
     person' {
-        rule (fun p -> p.Name) "Lucas"
-        rule (fun p -> p.BirthDate) (DateTime.Today.AddYears -32)
+        rule (_.Name) "Lucas"
+        rule (_.BirthDate) (DateTime.Today.AddYears -32)
         one
     }
 
 let persons =
     person' {
-        rule (fun p -> p.Status) "other"
+        rule (_.Status) "other"
         list 5
     }
 
-let infinityPersons = person' { lazy_seq }
+let infinityPersons = person' { toSeq }
 
 let personTuple1, personTuple2 =
     person' {
-        rule (fun p -> p.Status) "cursed"
+        rule (_.Status) "cursed"
         two
     }
 
@@ -88,7 +88,7 @@ printfn "%A" person1
 printfn "%A" person2
 printfn "%A" persons
 printfn "%A,%A" personTuple1 personTuple2
-printfn "From faker: %A" (generate person'.Faker)
+printfn "From faker: %A" (person'.Faker |> Faker.generate)
 printfn "%A" (infinityPersons |> Seq.take 3 |> Seq.toList)
 
 
@@ -112,8 +112,8 @@ let customBuilder =
         withName "Artorias"
         canDrive
 
-        rule (fun p -> p.Address) address'
-        rule (fun p -> p.OtherAddresses) []
+        rule (_.Address) address'
+        rule (_.OtherAddresses) []
 
         build into person
         rand person.Id
@@ -122,4 +122,4 @@ let customBuilder =
     }
 
 printfn "custom: %A" (customBuilder { one })
-printfn "%A" (generate customBuilder)
+printfn "%A" (customBuilder.Generate())
