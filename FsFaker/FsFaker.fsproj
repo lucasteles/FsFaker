@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Library</OutputType>
         <IsPackable>true</IsPackable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -29,6 +29,7 @@
     <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
         <Compile Include="Config.fs" />
+        <Compile Include="Faker.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Helpers.fs" />
         <Compile Include="BuilderFor.fs" />
@@ -43,12 +44,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bogus" Version="34.0.2" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+        <PackageReference Include="Bogus" Version="35.3.0" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
-        <PackageReference Update="FSharp.Core" Version="6.0.7" />
     </ItemGroup>
 
 </Project>

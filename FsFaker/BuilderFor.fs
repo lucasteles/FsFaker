@@ -25,6 +25,10 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
     member this.Run(GetFaker faker) = faker.GetFaker()
     member this.Run(GenerateOne faker) = faker.Generate()
     member this.Run(GenerateTwo faker) = faker.Generate(), faker.Generate()
+
+    member this.Run(GenerateThree faker) =
+        faker.Generate(), faker.Generate(), faker.Generate()
+
     member inline this.Run(MapFaker value) = value: ^a
 
     member this.Run(GenerateList(faker, countOrMin, max)) =
@@ -47,7 +51,7 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
     member this.For(state: BuildInto<'t>, f: unit -> LazyFaker<'t>) = this.Combine(state, f ())
     member this.For(state: LazyFaker<'t>, f: unit -> BuildInto<'t>) = this.Combine(f (), state)
 
-    [<CustomOperation("get_faker")>]
+    [<CustomOperation("getFaker")>]
     member this.GetFaker(faker: LazyFaker<'t>) = GetFaker faker
 
     [<CustomOperation("generate")>]
@@ -58,6 +62,10 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
 
     [<CustomOperation("two")>]
     member this.Two(faker: LazyFaker<'t>) = GenerateTwo faker
+
+
+    [<CustomOperation("three")>]
+    member this.Three(faker: LazyFaker<'t>) = GenerateThree faker
 
     [<CustomOperation("generate")>]
     member this.Generate(faker: LazyFaker<'t>, countOrMin: int, ?max: int) = GenerateList(faker, countOrMin, max)
@@ -70,14 +78,12 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
         | Some min, Some max -> GenerateList(faker, min, Some max)
         | None, None -> GenerateList(faker, 1, None)
 
-    [<CustomOperation("lazy_seq")>]
+    [<CustomOperation("toSeq")>]
     member this.GenerateLazy(faker: LazyFaker<'t>, ?count: int) = GenerateLazy(faker, count)
 
-    [<CustomOperation("no_strict")>]
-    member _.NoStrict(faker: LazyFaker<'t>) = faker +> (fun f -> f.StrictMode(false))
-
     [<CustomOperation("strict")>]
-    member _.Strict(faker: LazyFaker<'t>) = faker +> (fun f -> f.StrictMode(true))
+    member _.Strict(faker: LazyFaker<'t>, ?strictEnabled) =
+        faker +> (fun f -> f.StrictMode(strictEnabled |> Option.defaultValue true))
 
     [<CustomOperation("freeze")>]
     member _.Freeze(state: LazyFaker<'t>) =
@@ -117,7 +123,7 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
     [<CustomOperation("rule")>]
     member _.RuleFor(faker: LazyFaker<'t>, rule: Expression<Func<'t, 'p>>, builder: BuilderFor<'p>) =
         faker
-        +> (fun f -> f.RuleFor(rule, valueFunction = fun () -> builder { generate }))
+        +> (fun f -> f.RuleFor(rule, valueFunction = (fun () -> builder { generate })))
 
     [<CustomOperation("rule")>]
     member _.RuleFor(faker: LazyFaker<'t>, rule: Expression<Func<'t, 'c>>, propBuilder: BuilderFor<'p>, ?count: int) =
@@ -125,18 +131,13 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
 
         faker
         +> (fun f ->
-            f.RuleFor(rule, (fun () -> propBuilder { lazy_seq n } |> Helpers.changeUnderlyingCollectionType<'c, 'p>)))
+            f.RuleFor(rule, (fun () -> propBuilder { toSeq n } |> Helpers.changeUnderlyingCollectionType<'c, 'p>)))
 
     [<CustomOperation("build", AllowIntoPattern = true)>]
     member _.Build(faker: LazyFaker<'t>) = BuildInto faker
 
     [<CustomOperation("set", MaintainsVariableSpace = true)>]
-    member _.Set
-        (
-            faker: LazyFaker<'t>,
-            [<ProjectionParameter>] rule: Expression<Func<'t, 'p>>,
-            factory: Func<Faker, 'p>
-        ) =
+    member _.Set(faker: LazyFaker<'t>, [<ProjectionParameter>] rule: Expression<Func<'t, 'p>>, factory: Faker -> 'p) =
         faker +> (fun f -> f.RuleFor(rule, factory))
 
     [<CustomOperation("set", MaintainsVariableSpace = true)>]
@@ -164,7 +165,7 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
             propBuilder: BuilderFor<'p>
         ) =
         faker
-        +> (fun f -> f.RuleFor(rule, valueFunction = fun () -> propBuilder { generate }))
+        +> (fun f -> f.RuleFor(rule, valueFunction = (fun () -> propBuilder { generate })))
 
     [<CustomOperation("set", MaintainsVariableSpace = true)>]
     member this.Set<'c, 'p when 'p: not struct and 'c :> IEnumerable<'p>>
@@ -295,7 +296,7 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
         faker
         +> (fun f -> f.RuleFor(rule, (fun (f: Faker) -> f.Random.ListItem(items))))
 
-    member this.Faker = this { get_faker }
+    member this.Faker = this { getFaker }
     member this.FreezeValues() = this { freeze }
     member this.Generate() = this { generate }
     member this.Generate(n: int) = this { generate n }
