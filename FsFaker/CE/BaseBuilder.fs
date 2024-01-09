@@ -1,8 +1,8 @@
-namespace FsFaker
+namespace FsFaker.CE
 
 open System
 open Bogus
-open FsFaker.Types
+open FsFaker.CE.Types
 
 [<AbstractClass>]
 type BaseBuilder<'t, 'builder when 't: not struct and 'builder :> BuilderFor<'t>>(baseFaker: Faker<'t> option) =

@@ -30,11 +30,12 @@
         <None Include="..\README.md" Pack="true" PackagePath="\" />
         <Compile Include="Config.fs" />
         <Compile Include="Faker.fs" />
-        <Compile Include="Types.fs" />
         <Compile Include="Helpers.fs" />
-        <Compile Include="BuilderFor.fs" />
-        <Compile Include="BaseBuilder.fs" />
         <Compile Include="Extensions.fs" />
+        <Compile Include="Builder.fs" />
+        <Compile Include="CE\Types.fs" />
+        <Compile Include="CE\BuilderFor.fs" />
+        <Compile Include="CE\BaseBuilder.fs" />
     </ItemGroup>
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
