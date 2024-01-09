@@ -1,12 +1,12 @@
-namespace FsFaker.CE
+namespace FsFaker
 
 open System
 open System.Collections.Generic
 open System.Linq.Expressions
 open Bogus
 open FsFaker
-open FsFaker.CE.Types
-open FsFaker.CE.Types.Internal
+open FsFaker.Types
+open FsFaker.Types.Internal
 
 type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
 

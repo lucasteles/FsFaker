@@ -1,4 +1,4 @@
-namespace FsFaker.CE.Types
+namespace FsFaker.Types
 
 open System
 open System.Diagnostics
@@ -53,9 +53,9 @@ type LazyFaker<'t> when 't: not struct =
     member this.Generate(n: int) =
         this.GetFaker().Generate(n) |> List.ofSeq
 
-namespace FsFaker.CE.Types.Internal
+namespace FsFaker.Types.Internal
 
-open FsFaker.CE.Types
+open FsFaker.Types
 type GetFaker<'t> when 't: not struct = GetFaker of LazyFaker<'t>
 type BuildInto<'t> when 't: not struct = BuildInto of LazyFaker<'t>
 type GenerateOne<'t> when 't: not struct = GenerateOne of LazyFaker<'t>

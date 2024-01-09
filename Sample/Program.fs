@@ -1,8 +1,8 @@
 ﻿open System
 open FsFaker
 open FsFaker.Builder
-open FsFaker.CE
-open FsFaker.CE.Types
+open FsFaker
+open FsFaker.Types
 
 type Status =
     | Enabled
