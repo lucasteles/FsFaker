@@ -4,6 +4,7 @@ open System
 open System.Collections.Generic
 open System.Linq.Expressions
 open Bogus
+open FsFaker
 open FsFaker.Types
 open FsFaker.Types.Internal
 

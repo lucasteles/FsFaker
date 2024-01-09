@@ -3,6 +3,7 @@ module internal FsFaker.Helpers
 open System.Collections.Generic
 open System.Collections.Immutable
 open System.Linq
+open System.Linq.Expressions
 
 let changeUnderlyingCollectionType<'c, 'p when 'p: not struct and 'c :> IEnumerable<'p>> (items: 'p seq) =
 
@@ -38,3 +39,13 @@ let getTupleFromRecord record =
     record.GetType()
     |> FSharpType.GetRecordFields
     |> Array.map (fun prop -> prop.Name, FSharpValue.GetRecordField(record, prop))
+
+
+let getMemberInfo (expression: Expression<'t>) =
+    match expression.Body with
+    | :? MemberExpression as m -> Some m.Member
+    | :? UnaryExpression as u ->
+        match u.Operand with
+        | :? MemberExpression as m -> Some m.Member
+        | _ -> None
+    | _ -> None

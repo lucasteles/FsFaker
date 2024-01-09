@@ -1,5 +1,7 @@
 ﻿open System
 open FsFaker
+open FsFaker.Builder
+open FsFaker
 open FsFaker.Types
 
 type Status =
@@ -42,6 +44,20 @@ let address' =
         set address.Street _.Address.StreetName()
         set address.Type Faker.randomUnion<AddressType>
     }
+
+let addressBuilder =
+    Builder.create (fun f ->
+        { City = f.Address.City()
+          Street = f.Address.StreetName()
+          Type = f.Random.Union<AddressType>() })
+    |> Builder.update (fun f m ->
+        { m with
+            City = $"TESTE {f.Random.Int()}" })
+
+
+let addresses = addressBuilder.Generate(10) //.With((fun x -> x.City), "asdf")
+
+printfn "%A" addresses
 
 let person' =
     BuilderFor<Person>() {
