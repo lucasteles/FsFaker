@@ -13,6 +13,33 @@ Easily define data builders with [Bogus](https://github.com/bchavez/Bogus)
 $ dotnet add package FsFaker
 ```
 
+## Simple Builders
+
+```fsharp
+type AddressType = Principal | Secondary
+type Address =
+    { Street: string
+      City: string
+      Type: AddressType }
+
+// defining builders
+let addressBuilder =
+    Builder.create (fun f ->
+        { City = f.Address.City()
+          Street = f.Address.StreetName()
+          Type = f.Random.Union<AddressType>() })
+
+let addresses = addressBuilder.Generate(10) 
+
+// extending / updating builders
+let addressesChanged =
+    addressBuilder
+    |> Builder.update (fun f model ->
+        { model with City = $"TEST {f.Random.Int()}" })
+    |> Builder.one
+      
+```
+
 ## Defining Builders
 
 ```fsharp

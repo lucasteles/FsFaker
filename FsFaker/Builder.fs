@@ -1,5 +1,6 @@
-﻿namespace FsFaker.Builder
+﻿namespace FsFaker
 
+open System
 open Bogus
 open FsFaker
 
@@ -17,11 +18,6 @@ type DataBuilder<'t> =
 
     member this.GenerateInfinite() =
         Seq.initInfinite (fun _ -> this.Generate())
-
-// member this.With(field: Expression<Func<'t, 'u>>, value: 'u) =
-//     let memberInfo = Helpers.getMemberInfo field
-//     // let ctor = FSharpValue.cons
-//     this
 
 [<RequireQualifiedAccess>]
 module Builder =
@@ -47,6 +43,7 @@ module Builder =
     let array (count: int) (b: DataBuilder<_>) = b |> list count |> List.toArray
 
     let setLocale (locale: string) (b: DataBuilder<_>) = b.Faker.Locale <- locale
+    let setDateTimeReference (date: DateTime) (b: DataBuilder<_>) = b.Faker.DateTimeReference <- date
 
     let seed (localSeed: int) (b: DataBuilder<_>) = b.Faker.Random <- Randomizer localSeed
 
@@ -54,10 +51,10 @@ module Builder =
         { b with
             Mapper = b.Mapper >> f b.Faker }
 
-    let combine (a: DataBuilder<'t>) (b: DataBuilder<'t>) =
-        { b with Mapper = b.Mapper >> a.Mapper }
-
-    let map f (b: DataBuilder<_>) = { b with Mapper = b.Mapper >> f }
+    let map (f: 'a -> 'b) (b: DataBuilder<'a>) =
+        { Constructor = fun _ -> generate b |> f
+          Faker = b.Faker
+          Mapper = id }
 
     let zip (a: DataBuilder<'a>) (b: DataBuilder<'b>) =
         { Constructor = fun _ -> generate a, generate b
@@ -69,7 +66,7 @@ module Builder =
           Faker = b.Faker
           Mapper = id }
 
-    let from (value: 'a) : DataBuilder<'a> = create (fun _ -> value)
+    let fromValue (value: 'a) : DataBuilder<'a> = create (fun _ -> value)
 
     let bind (f: 'a -> DataBuilder<'b>) (b: DataBuilder<'a>) : DataBuilder<'b> =
         { Constructor = fun _ -> b |> generate |> f |> generate

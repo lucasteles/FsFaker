@@ -8,8 +8,8 @@
         <Authors>Lucas Teles - lucas.teles@outlook.com</Authors>
         <Company />
         <Description>Use Bogus to create data builders in F#</Description>
-        <RepositoryType>GitHub</RepositoryType>
-        <PackageProjectUrl>https://github.com/lucasteles/FsFaker</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/lucasteles/FsFaker.git</PackageProjectUrl>
         <RepositoryUrl>https://github.com/lucasteles/FsFaker</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
@@ -28,9 +28,9 @@
     </PropertyGroup>
     <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
-        <Compile Include="Config.fs" />
-        <Compile Include="Faker.fs" />
         <Compile Include="Helpers.fs" />
+        <Compile Include="Faker.fs" />
+        <Compile Include="FsFakerConfig.fs" />
         <Compile Include="Extensions.fs" />
         <Compile Include="Builder.fs" />
         <Compile Include="CE\Types.fs" />

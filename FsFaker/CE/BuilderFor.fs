@@ -1,18 +1,18 @@
-namespace FsFaker
+namespace FsFaker.Builders
 
 open System
 open System.Collections.Generic
 open System.Linq.Expressions
 open Bogus
 open FsFaker
-open FsFaker.Types
-open FsFaker.Types.Internal
+open FsFaker.Builders.Types
+open FsFaker.Builders.Types.Internal
 
 type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
 
     member val rootFaker =
         match baseFaker with
-        | Some f -> f.Clone()
+        | Some f -> Faker.clone f
         | None -> FsFakerConfig.newFaker().StrictMode(true)
 
     new() = BuilderFor None
@@ -85,6 +85,10 @@ type BuilderFor<'t when 't: not struct>(baseFaker: Faker<'t> option) =
     [<CustomOperation("strict")>]
     member _.Strict(faker: LazyFaker<'t>, ?strictEnabled) =
         faker +> (fun f -> f.StrictMode(strictEnabled |> Option.defaultValue true))
+
+    [<CustomOperation("useDateTimeReference")>]
+    member _.UseDateTimeRef(faker: LazyFaker<'t>, dateTime: DateTime) =
+        faker +> (_.UseDateTimeReference(dateTime))
 
     [<CustomOperation("freeze")>]
     member _.Freeze(state: LazyFaker<'t>) =

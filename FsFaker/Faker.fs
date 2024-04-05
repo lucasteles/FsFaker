@@ -11,7 +11,6 @@ module Faker =
     let many (count: int) (f: #Faker<_>) = f.Generate(count) |> List.ofSeq
     let seq (count: int) (f: #Faker<'t>) : 't seq = f.GenerateLazy(count)
     let forever (f: #Faker<'t>) : 't seq = f.GenerateForever()
-    let clone (f: #Faker<_>) = f.Clone()
 
     module Random =
         let union<'t> (rand: Randomizer) : 't =
@@ -21,3 +20,10 @@ module Faker =
             Reflection.FSharpValue.MakeUnion(case, [||]) :?> 't
 
     let randomUnion<'t> (f: Faker) = Random.union<'t> f.Random
+
+    let getInternalFaker (faker: Faker<'t>) : Faker = (faker :> IFakerTInternal).FakerHub
+
+    let clone (faker: #Faker<'t>) =
+        let clone = faker.Clone()
+        (getInternalFaker clone).Date.LocalSystemClock <- (getInternalFaker faker).Date.LocalSystemClock
+        clone
