@@ -1,9 +1,10 @@
-namespace FsFaker.Types
+namespace FsFaker.Builders.Types
 
 open System
 open System.Diagnostics
 open System.Linq.Expressions
 open Bogus
+open FsFaker
 
 type MapFaker<'t> = MapFaker of 't
 
@@ -18,7 +19,8 @@ type LazyFaker<'t> when 't: not struct =
           RootFaker = rootFaker
           Timestamp = 0 }
 
-    member internal this.GetFaker() = this.RootFaker.Clone() |> this.Map
+    member internal this.GetFaker() =
+        this.RootFaker |> Faker.clone |> this.Map
 
     member internal this.UpdateTime() =
         { this with
@@ -53,9 +55,9 @@ type LazyFaker<'t> when 't: not struct =
     member this.Generate(n: int) =
         this.GetFaker().Generate(n) |> List.ofSeq
 
-namespace FsFaker.Types.Internal
+namespace FsFaker.Builders.Types.Internal
 
-open FsFaker.Types
+open FsFaker.Builders.Types
 type GetFaker<'t> when 't: not struct = GetFaker of LazyFaker<'t>
 type BuildInto<'t> when 't: not struct = BuildInto of LazyFaker<'t>
 type GenerateOne<'t> when 't: not struct = GenerateOne of LazyFaker<'t>

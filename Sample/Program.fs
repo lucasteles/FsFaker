@@ -1,8 +1,7 @@
 ﻿open System
 open FsFaker
-open FsFaker.Builder
-open FsFaker
-open FsFaker.Types
+open FsFaker.Builders
+open FsFaker.Builders.Types
 
 type Status =
     | Enabled
@@ -37,6 +36,11 @@ type Person =
 
 FsFakerConfig.setLocale "pt_BR"
 
+[<CLIMutable>]
+type Foo = { V: DateTime }
+
+let f = Builder.create (fun f -> { V = f.Date.Soon() })
+
 let address' =
     BuilderFor<Address>() {
         build into address
@@ -50,12 +54,15 @@ let addressBuilder =
         { City = f.Address.City()
           Street = f.Address.StreetName()
           Type = f.Random.Union<AddressType>() })
-    |> Builder.update (fun f m ->
-        { m with
-            City = $"TESTE {f.Random.Int()}" })
 
+let addresses = addressBuilder.Generate(10)
 
-let addresses = addressBuilder.Generate(10) //.With((fun x -> x.City), "asdf")
+let addressesChanged =
+    addressBuilder
+    |> Builder.update (fun f model ->
+        { model with
+            City = $"TEST {f.Random.Int()}" })
+    |> Builder.one
 
 printfn "%A" addresses
 

@@ -4,6 +4,7 @@ open System.Collections.Generic
 open System.Collections.Immutable
 open System.Linq
 open System.Linq.Expressions
+open Bogus
 
 let changeUnderlyingCollectionType<'c, 'p when 'p: not struct and 'c :> IEnumerable<'p>> (items: 'p seq) =
 
