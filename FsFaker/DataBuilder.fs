@@ -7,10 +7,11 @@ open FsFaker
 type DataBuilder<'t> =
     { Constructor: Faker -> 't
       Faker: Faker
-      Mapper: 't -> 't }
+      Transform: 't -> 't
+      Finalizer: 't -> 't }
 
     member this.Generate() =
-        this.Faker |> this.Constructor |> this.Mapper
+        this.Faker |> this.Constructor |> this.Transform |> this.Finalizer
 
     member this.Generate(count: int) =
         [ for _ = 0 to count do
@@ -25,7 +26,8 @@ module DataBuilder =
     let create<'t> ctor : DataBuilder<'t> =
         { Constructor = ctor
           Faker = FsFakerConfig.newDataFaker ()
-          Mapper = id }
+          Transform = id
+          Finalizer = id }
 
     let generate (b: DataBuilder<_>) = b.Generate()
     let infinite (b: DataBuilder<_>) : 't seq = b.GenerateInfinite()
@@ -51,16 +53,22 @@ module DataBuilder =
 
         { Constructor = fun _ -> currentValue
           Faker = b.Faker
-          Mapper = id }
+          Transform = id
+          Finalizer = id }
 
     let update fn (b: DataBuilder<_>) =
         { b with
-            Mapper = b.Mapper >> fn b.Faker }
+            Transform = b.Transform >> fn b.Faker }
+
+    let finalizeWith fn (b: DataBuilder<_>) =
+        { b with
+            Finalizer = b.Finalizer >> fn b.Faker }
 
     let map (fn: 'a -> 'b) (b: DataBuilder<'a>) =
         { Constructor = fun _ -> generate b |> fn
           Faker = b.Faker
-          Mapper = id }
+          Transform = id
+          Finalizer = id }
 
     let tap (fn: Faker -> 'a -> unit) (b: DataBuilder<'a>) =
         b
@@ -71,16 +79,19 @@ module DataBuilder =
     let zip (a: DataBuilder<'a>) (b: DataBuilder<'b>) =
         { Constructor = fun _ -> generate a, generate b
           Faker = b.Faker
-          Mapper = id }
+          Transform = id
+          Finalizer = id }
 
     let zip3 (a: DataBuilder<'a>) (b: DataBuilder<'b>) (c: DataBuilder<'c>) =
         { Constructor = fun _ -> generate a, generate b, generate c
           Faker = b.Faker
-          Mapper = id }
+          Transform = id
+          Finalizer = id }
 
     let fromValue (value: 'a) : DataBuilder<'a> = create (fun _ -> value)
 
     let bind (f: 'a -> DataBuilder<'b>) (b: DataBuilder<'a>) : DataBuilder<'b> =
         { Constructor = fun _ -> b |> generate |> f |> generate
           Faker = b.Faker
-          Mapper = id }
+          Transform = id
+          Finalizer = id }
