@@ -53,14 +53,20 @@ module DataBuilder =
           Faker = b.Faker
           Mapper = id }
 
-    let update f (b: DataBuilder<_>) =
+    let update fn (b: DataBuilder<_>) =
         { b with
-            Mapper = b.Mapper >> f b.Faker }
+            Mapper = b.Mapper >> fn b.Faker }
 
-    let map (f: 'a -> 'b) (b: DataBuilder<'a>) =
-        { Constructor = fun _ -> generate b |> f
+    let map (fn: 'a -> 'b) (b: DataBuilder<'a>) =
+        { Constructor = fun _ -> generate b |> fn
           Faker = b.Faker
           Mapper = id }
+
+    let tap (fn: Faker -> 'a -> unit) (b: DataBuilder<'a>) =
+        b
+        |> update (fun faker model ->
+            fn faker model
+            model)
 
     let zip (a: DataBuilder<'a>) (b: DataBuilder<'b>) =
         { Constructor = fun _ -> generate a, generate b
