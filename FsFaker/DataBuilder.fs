@@ -20,7 +20,7 @@ type DataBuilder<'t> =
         Seq.initInfinite (fun _ -> this.Generate())
 
 [<RequireQualifiedAccess>]
-module Builder =
+module DataBuilder =
 
     let create<'t> ctor : DataBuilder<'t> =
         { Constructor = ctor
@@ -29,7 +29,6 @@ module Builder =
 
     let generate (b: DataBuilder<_>) = b.Generate()
     let infinite (b: DataBuilder<_>) : 't seq = b.GenerateInfinite()
-
     let one (b: DataBuilder<_>) = generate b
     let two (b: DataBuilder<_>) = one b, one b
     let three (b: DataBuilder<_>) = one b, one b, one b
@@ -46,6 +45,13 @@ module Builder =
     let setDateTimeReference (date: DateTime) (b: DataBuilder<_>) = b.Faker.DateTimeReference <- date
 
     let seed (localSeed: int) (b: DataBuilder<_>) = b.Faker.Random <- Randomizer localSeed
+
+    let freeze (b: DataBuilder<_>) =
+        let currentValue = b.Generate()
+
+        { Constructor = fun _ -> currentValue
+          Faker = b.Faker
+          Mapper = id }
 
     let update f (b: DataBuilder<_>) =
         { b with

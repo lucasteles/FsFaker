@@ -32,7 +32,7 @@
         <Compile Include="Faker.fs" />
         <Compile Include="FsFakerConfig.fs" />
         <Compile Include="Extensions.fs" />
-        <Compile Include="Builder.fs" />
+        <Compile Include="DataBuilder.fs" />
         <Compile Include="CE\Types.fs" />
         <Compile Include="CE\BuilderFor.fs" />
         <Compile Include="CE\BaseBuilder.fs" />

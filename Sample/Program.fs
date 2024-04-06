@@ -39,7 +39,7 @@ FsFakerConfig.setLocale "pt_BR"
 [<CLIMutable>]
 type Foo = { V: DateTime }
 
-let f = Builder.create (fun f -> { V = f.Date.Soon() })
+let f = DataBuilder.create (fun f -> { V = f.Date.Soon() })
 
 let address' =
     BuilderFor<Address>() {
@@ -50,7 +50,7 @@ let address' =
     }
 
 let addressBuilder =
-    Builder.create (fun f ->
+    DataBuilder.create (fun f ->
         { City = f.Address.City()
           Street = f.Address.StreetName()
           Type = f.Random.Union<AddressType>() })
@@ -59,10 +59,10 @@ let addresses = addressBuilder.Generate(10)
 
 let addressesChanged =
     addressBuilder
-    |> Builder.update (fun f model ->
+    |> DataBuilder.update (fun f model ->
         { model with
             City = $"TEST {f.Random.Int()}" })
-    |> Builder.one
+    |> DataBuilder.one
 
 printfn "%A" addresses
 
